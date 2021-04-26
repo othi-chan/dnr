@@ -1,3 +1,8 @@
+using Art.Web.Api.Middlewares;
+using Dnr.Service.Auth;
+using Dnr.Service.Auth.Abstractions;
+using Dnr.Service.Game;
+using Dnr.Service.Game.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,22 +31,26 @@ namespace Dnr.Web.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dnr.Web.Api", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "DnR", Version = "v1" });
             });
+
+            services.AddSingleton<IAuthService, AuthService>();
+            services.AddSingleton<IGameService, GameService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<ExceptionMiddleware>();
+
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dnr.Web.Api v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DnR v1"));
             }
 
             app.UseHttpsRedirection();

@@ -1,0 +1,12 @@
+<Project>
+
+  <PropertyGroup>
+    <DefaultTargetFramework>net5.0</DefaultTargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>

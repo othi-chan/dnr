@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dnr.Service.Auth.Abstractions;
 using Dnr.Service.Game.Abstractions;
 using Dnr.Service.Game.Models;
+using Dnr.Service.Game.Models.Abstractions;
 using Dnr.Web.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -39,7 +40,107 @@ namespace Dnr.Web.Api.Controllers
             {
                 CastleGet? castleGet = null;
                 var villagesGet = new List<VillageGet>();
-                foreach (var location in session.Map!.Locations)
+                var roadsGet = new List<RoadGet>();
+                var armiesGet = new List<ArmyGet>();
+
+                if (session.Map != null)
+                {
+                    foreach (var location in session.Map.Locations)
+                    {
+                        if (location is Castle castle)
+                        {
+                            castleGet = new CastleGet
+                            {
+                                Name = castle.Name,
+                                Owner = (Player)castle.Owner!,
+                                X = castle.X,
+                                Y = castle.Y,
+                                ArmyCount = castle.ArmyCount,
+                                ArmyGrowth = castle.ArmyGrowth,
+                                DefenseModifier = castle.DefenseModifier,
+                                InfluenceGrowth = castle.InfluenceGrowth,
+                            };
+                        }
+
+                        if (location is Village village)
+                        {
+                            villagesGet.Add(new VillageGet
+                            {
+                                Name = village.Name,
+                                Owner = (Player)village.Owner!,
+                                X = village.X,
+                                Y = village.Y,
+                                ArmyCount = village.ArmyCount,
+                                LevelUpCost = village.LevelUpCost,
+                                ArmyGrowth = village.ArmyGrowth,
+                                DefenseModifier = village.DefenseModifier,
+                                InfluenceGrowth = village.InfluenceGrowth,
+                                Level = village.Level,
+                            });
+                        }
+                    }
+
+                    foreach (var road in session.Map.Roads)
+                    {
+                        roadsGet.Add(new RoadGet
+                        {
+                            End1Name = road.Ends.Item1.Name,
+                            End2Name = road.Ends.Item2.Name,
+                            Length = road.Length,
+                            SpeedModifier = road.SpeedModifier,
+                        });
+                    }
+
+                    foreach (var army in session.Map.Armies)
+                    {
+                        armiesGet.Add(new ArmyGet
+                        {
+                            SourceName = army.Source.Name,
+                            TargetName = army.Target.Name,
+                            Owner = (Player)army.Owner,
+                            Count = army.Count,
+                            StartTime = army.StartTime,
+                            FinishTime = army.FinishTime,
+                            SpeedModifier = army.SpeedModifier,
+                        });
+                    }
+                }
+
+                sessionsGet.Add(new SessionGet
+                {
+                    Id = session!.Id,
+                    Players = session.Players.Values,
+                    PlayersCapacity = session.PlayersCapacity,
+                    GameStarted = session.GameStarted,
+                    Map = session.Map == null ? null : new GameMapGet
+                    {
+                        Castle = castleGet,
+                        Vilages = villagesGet,
+                        Roads = roadsGet,
+                        Armies = armiesGet,
+                    },
+                    Winner = session.Winner,
+                });
+            }
+
+            return Ok(sessionsGet);
+        }
+
+        [HttpGet]
+        [Route("{id:Guid}")]
+        [SwaggerResponse(StatusCodes.Status200OK, type: typeof(SessionGet))]
+        public ActionResult Get(Guid id)
+        {
+            var succeed = _gameService.Sessions.TryGetValue(id, out var session);
+
+            CastleGet? castleGet = null;
+            var villagesGet = new List<VillageGet>();
+            var roadsGet = new List<RoadGet>();
+            var armiesGet = new List<ArmyGet>();
+
+            if (session!.Map != null)
+            {
+                foreach (var location in session.Map.Locations)
                 {
                     if (location is Castle castle)
                     {
@@ -74,7 +175,6 @@ namespace Dnr.Web.Api.Controllers
                     }
                 }
 
-                var roadsGet = new List<RoadGet>();
                 foreach (var road in session.Map.Roads)
                 {
                     roadsGet.Add(new RoadGet
@@ -86,7 +186,6 @@ namespace Dnr.Web.Api.Controllers
                     });
                 }
 
-                var armiesGet = new List<ArmyGet>();
                 foreach (var army in session.Map.Armies)
                 {
                     armiesGet.Add(new ArmyGet
@@ -100,96 +199,6 @@ namespace Dnr.Web.Api.Controllers
                         SpeedModifier = army.SpeedModifier,
                     });
                 }
-
-                sessionsGet.Add(new SessionGet
-                {
-                    Id = session!.Id,
-                    Players = session.Players.Values,
-                    PlayersCapacity = session.PlayersCapacity,
-                    GameStarted = session.GameStarted,
-                    Map = new GameMapGet
-                    {
-                        Castle = castleGet,
-                        Vilages = villagesGet,
-                        Roads = roadsGet,
-                        Armies = armiesGet,
-                    },
-                    Winner = session.Winner,
-                });
-            }
-
-            return Ok(sessionsGet);
-        }
-
-        [HttpGet]
-        [Route("{id:Guid}")]
-        [SwaggerResponse(StatusCodes.Status200OK, type: typeof(SessionGet))]
-        public ActionResult Get(Guid id)
-        {
-            var succeed = _gameService.Sessions.TryGetValue(id, out var session);
-
-            CastleGet? castleGet = null;
-            var villagesGet = new List<VillageGet>();
-            foreach (var location in session!.Map!.Locations)
-            {
-                if (location is Castle castle)
-                {
-                    castleGet = new CastleGet
-                    {
-                        Name = castle.Name,
-                        Owner = (Player)castle.Owner!,
-                        X = castle.X,
-                        Y = castle.Y,
-                        ArmyCount = castle.ArmyCount,
-                        ArmyGrowth = castle.ArmyGrowth,
-                        DefenseModifier = castle.DefenseModifier,
-                        InfluenceGrowth = castle.InfluenceGrowth,
-                    };
-                }
-
-                if (location is Village village)
-                {
-                    villagesGet.Add(new VillageGet
-                    {
-                        Name = village.Name,
-                        Owner = (Player)village.Owner!,
-                        X = village.X,
-                        Y = village.Y,
-                        ArmyCount = village.ArmyCount,
-                        LevelUpCost = village.LevelUpCost,
-                        ArmyGrowth = village.ArmyGrowth,
-                        DefenseModifier = village.DefenseModifier,
-                        InfluenceGrowth = village.InfluenceGrowth,
-                        Level = village.Level,
-                    });
-                }
-            }
-
-            var roadsGet = new List<RoadGet>();
-            foreach (var road in session.Map.Roads)
-            {
-                roadsGet.Add(new RoadGet
-                {
-                    End1Name = road.Ends.Item1.Name,
-                    End2Name = road.Ends.Item2.Name,
-                    Length = road.Length,
-                    SpeedModifier = road.SpeedModifier,
-                });
-            }
-
-            var armiesGet = new List<ArmyGet>();
-            foreach (var army in session.Map.Armies)
-            {
-                armiesGet.Add(new ArmyGet
-                {
-                    SourceName = army.Source.Name,
-                    TargetName = army.Target.Name,
-                    Owner = (Player)army.Owner,
-                    Count = army.Count,
-                    StartTime = army.StartTime,
-                    FinishTime = army.FinishTime,
-                    SpeedModifier = army.SpeedModifier,
-                });
             }
 
             return succeed
@@ -199,7 +208,7 @@ namespace Dnr.Web.Api.Controllers
                     Players = session.Players.Values,
                     PlayersCapacity = session.PlayersCapacity,
                     GameStarted = session.GameStarted,
-                    Map = new GameMapGet
+                    Map = session.Map == null ? null : new GameMapGet
                     {
                         Castle = castleGet,
                         Vilages = villagesGet,

@@ -19,8 +19,6 @@ namespace Dnr.Service.Game.Models
 
         public int ArmyCapacity => Owner == null ? DefaultArmyCount : int.MaxValue;
 
-        public int ArmyCount { get; set; }
-
         public Castle(
             string name,
             double x,

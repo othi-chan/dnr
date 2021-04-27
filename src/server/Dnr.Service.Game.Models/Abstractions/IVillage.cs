@@ -1,4 +1,5 @@
 using System;
+
 namespace Dnr.Service.Game.Models.Abstractions
 {
     public interface IVillage : ILocation
@@ -12,7 +13,5 @@ namespace Dnr.Service.Game.Models.Abstractions
         int LevelUpCost { get; }
 
         int Level { get; set; }
-
-        int ArmyCount { get; set; }
     }
 }

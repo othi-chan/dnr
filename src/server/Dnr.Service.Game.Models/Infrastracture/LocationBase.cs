@@ -15,6 +15,8 @@ namespace Dnr.Service.Game.Models.Infrastracture
 
         public IPlayer? Owner { get; set; }
 
+        public int ArmyCount { get; set; }
+
         public LocationBase(
             string name,
             double x,
@@ -26,6 +28,7 @@ namespace Dnr.Service.Game.Models.Infrastracture
             Y = y;
             Roads = new List<IRoad>();
             Owner = owner;
+            ArmyCount = 0;
         }
     }
 }

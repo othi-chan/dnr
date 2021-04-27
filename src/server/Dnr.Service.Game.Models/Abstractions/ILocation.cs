@@ -12,6 +12,8 @@ namespace Dnr.Service.Game.Models.Abstractions
 
         List<IRoad> Roads { get; }
 
+        public int ArmyCount { get; set; }
+
         IPlayer? Owner { get; set; }
     }
 }

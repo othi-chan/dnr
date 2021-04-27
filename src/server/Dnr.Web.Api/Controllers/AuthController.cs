@@ -66,7 +66,7 @@ namespace Dnr.Web.Api.Controllers
 
         [HttpPost]
         [Route("")]
-        [SwaggerResponse(StatusCodes.Status201Created, "Created person id.", typeof(long))]
+        [SwaggerResponse(StatusCodes.Status201Created, "Created account id.", typeof(long))]
         public ActionResult Register([FromBody] AccountPost data)
         {
             var account = _authService.Register(data.Login!, data.Password!);

@@ -11,10 +11,10 @@ namespace Dnr.Service.Game
 {
     public class GameService : IGameService
     {
+        public ConcurrentDictionary<Guid, Session> Sessions { get; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "<Pending>")]
         private Timer GeneralTimer { get; }
-
-        private ConcurrentDictionary<Guid, Session> Sessions { get; }
 
         private ConcurrentDictionary<Guid, Timer> GameTimers { get; }
 

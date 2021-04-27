@@ -4,4 +4,8 @@
     <TargetFramework>$(DefaultTargetFramework)</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Dnr.Service.Game.Models\Dnr.Service.Game.Models.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -18,7 +18,7 @@ namespace Dnr.Web.Api.Models
 
         public bool GameStarted { get; set; }
 
-        public GameMap? Map { get; set; }
+        public GameMapGet? Map { get; set; }
 
         public Player? Winner { get; set; }
     }

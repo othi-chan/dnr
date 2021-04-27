@@ -81,9 +81,11 @@ namespace Dnr.Service.Game
                 return (succeed: false, session);
 
             var succeedPlayerRemove = session.Players.TryRemove(player.Id, out _);
-            return session.Players.Any()
-                ? (succeed: succeedPlayerRemove, session)
-                : (succeed: true, session: null);
+            if (session.Players.Any())
+                return (succeed: succeedPlayerRemove, session);
+
+            var succeedSessionRemove = Sessions.TryRemove(sessionId, out _);
+            return (succeed: succeedSessionRemove, session: null);
         }
 
         public (bool succeed, Session? session) StartGame(Guid sessionId)
@@ -95,7 +97,7 @@ namespace Dnr.Service.Game
             if (!succeedSessionGet || session == null)
                 return (succeed: false, session);
 
-            if (session.Players.Count >= session.PlayersCapacity)
+            if (session.Players.Count != session.PlayersCapacity)
                 return (succeed: false, session);
 
             var gameTimer = new Timer(
@@ -137,7 +139,7 @@ namespace Dnr.Service.Game
             }
         }
 
-        public (bool succeed, Session? session) VillageLevelUp(long accauntId, Guid sessionId, string villageName)
+        public (bool succeed, Session? session) VillageLevelUp(Guid sessionId, string villageName)
         {
             if (!Sessions.ContainsKey(sessionId))
                 return (succeed: false, session: null);
@@ -146,12 +148,8 @@ namespace Dnr.Service.Game
             if (!succeedSessionGet || session == null)
                 return (succeed: false, session);
 
-            var succeedPlayerGet = session.Players.TryGetValue(accauntId, out var player);
-            if (!succeedPlayerGet || player == null)
-                return (succeed: false, session);
-
             var village = (Village)session.Map!.Locations.Single(_ => _.Name == villageName);
-            if (player.Influence < village.LevelUpCost)
+            if (village.Owner == null || village.Owner.Influence < village.LevelUpCost)
                 return (succeed: false, session);
 
             village.Level++;

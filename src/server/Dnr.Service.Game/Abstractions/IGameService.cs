@@ -16,7 +16,7 @@ namespace Dnr.Service.Game.Abstractions
 
         (bool succeed, Session? session) StartGame(Guid sessionId);
 
-        (bool succeed, Session? session) VillageLevelUp(long accauntId, Guid sessionId, string villageName);
+        (bool succeed, Session? session) VillageLevelUp(Guid sessionId, string villageName);
 
         (bool succeed, Session? session) SendArmy(
             long accauntId,

@@ -23,7 +23,15 @@ namespace Dnr.Service.Auth
                     Password = "admin",
                     VictoriesTotal = 0,
                     DefeatsTotal = 0,
-                }
+                },
+                new Account
+                {
+                    Id = 1,
+                    Login = "user",
+                    Password = "user",
+                    VictoriesTotal = 0,
+                    DefeatsTotal = 0,
+                },
             };
         }
 

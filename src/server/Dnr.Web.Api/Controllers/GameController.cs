@@ -38,10 +38,12 @@ namespace Dnr.Web.Api.Controllers
             foreach (var session in sessions)
                 sessionsGet.Add(new SessionGet
                 {
-                    Id = session.Id,
+                    Id = session!.Id,
                     Players = session.Players.Values,
                     PlayersCapacity = session.PlayersCapacity,
                     GameStarted = session.GameStarted,
+                    Map = (GameMap)session.Map!,
+                    Winner = session.Winner,
                 });
 
             return Ok(sessionsGet);
@@ -60,6 +62,8 @@ namespace Dnr.Web.Api.Controllers
                     Players = session.Players.Values,
                     PlayersCapacity = session.PlayersCapacity,
                     GameStarted = session.GameStarted,
+                    Map = (GameMap)session.Map!,
+                    Winner = session.Winner,
                 })
                 : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -75,7 +79,7 @@ namespace Dnr.Web.Api.Controllers
         }
 
         [HttpPut]
-        [Route("{sessionId:Guid}/{accountId:int}")]
+        [Route("attach/{sessionId:Guid}/{accountId:int}")]
         [SwaggerResponse(StatusCodes.Status204NoContent, type: typeof(void))]
         public ActionResult AttachSession(Guid sessionId, int accountId)
         {
@@ -85,12 +89,30 @@ namespace Dnr.Web.Api.Controllers
         }
 
         [HttpDelete]
-        [Route("{sessionId:Guid}/{accountId:int}")]
+        [Route("detach/{sessionId:Guid}/{accountId:int}")]
         [SwaggerResponse(StatusCodes.Status204NoContent, type: typeof(void))]
         public ActionResult DetachSession(Guid sessionId, int accountId)
         {
             var account = _authService.Get(accountId);
             var (succeed, _) = _gameService.DetachSession(accountId, sessionId);
+            return succeed ? NoContent() : StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpPut]
+        [Route("start/{sessionId:Guid}")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, type: typeof(void))]
+        public ActionResult StartGame(Guid sessionId)
+        {
+            var (succeed, _) = _gameService.StartGame(sessionId);
+            return succeed ? NoContent() : StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpPut]
+        [Route("levelup/{sessionId:Guid}/{village}")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, type: typeof(void))]
+        public ActionResult LevelUp(Guid sessionId, string village)
+        {
+            var (succeed, _) = _gameService.VillageLevelUp(sessionId, village);
             return succeed ? NoContent() : StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

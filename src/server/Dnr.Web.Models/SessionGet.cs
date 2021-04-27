@@ -17,5 +17,9 @@ namespace Dnr.Web.Api.Models
         public int PlayersCapacity { get; set; }
 
         public bool GameStarted { get; set; }
+
+        public GameMap? Map { get; set; }
+
+        public Player? Winner { get; set; }
     }
 }

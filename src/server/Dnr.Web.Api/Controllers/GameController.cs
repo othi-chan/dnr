@@ -115,5 +115,14 @@ namespace Dnr.Web.Api.Controllers
             var (succeed, _) = _gameService.VillageLevelUp(sessionId, village);
             return succeed ? NoContent() : StatusCode(StatusCodes.Status500InternalServerError);
         }
+
+        [HttpPut]
+        [Route("army/{sessionId:Guid}")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, type: typeof(void))]
+        public ActionResult SendArmy(Guid sessionId, [FromBody] SendArmyPut data)
+        {
+            var (succeed, _) = _gameService.SendArmy(sessionId, data.SourceVillage!, data.TargetVillage!, data.ArmyCount);
+            return succeed ? NoContent() : StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }

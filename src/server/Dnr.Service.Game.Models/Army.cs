@@ -38,7 +38,8 @@ namespace Dnr.Service.Game.Models
             Road = road;
             Count = count;
             StartTime = DateTime.UtcNow;
-            FinishTime = StartTime.AddSeconds(Road.Length / SpeedModifier * Road.SpeedModifier * DefaultArmySpeed);
+            FinishTime = StartTime.Add(
+                TimeSpan.FromSeconds(road.Length / ((1.0 / (count / DefaultArmyCount)) * road.SpeedModifier * DefaultArmySpeed)));
         }
     }
 }

@@ -157,7 +157,6 @@ namespace Dnr.Service.Game
         }
 
         public (bool succeed, Session? session) SendArmy(
-            long accauntId,
             Guid sessionId,
             string sourceName,
             string targetName,
@@ -170,25 +169,21 @@ namespace Dnr.Service.Game
             if (!succeedSessionGet || session == null)
                 return (succeed: false, session);
 
-            var succeedPlayerGet = session.Players.TryGetValue(accauntId, out var player);
-            if (!succeedPlayerGet || player == null)
-                return (succeed: false, session);
-
             var sourceVillage = (Village)session.Map!.Locations.Single(_ => _.Name == sourceName);
             var road = sourceVillage.Roads.Single(_ => _.Ends.Item1.Name == targetName || _.Ends.Item2.Name == targetName);
             var targetVillage = road.Ends.Item1.Name == targetName ? road.Ends.Item1 : road.Ends.Item2;
 
-            if (armyCount < sourceVillage.ArmyCount)
+            if (armyCount > sourceVillage.ArmyCount)
                 return (succeed: false, session);
             sourceVillage.ArmyCount -= armyCount;
 
-            var army = new Army(owner: player, sourceVillage, targetVillage, road, armyCount);
+            var army = new Army(owner: sourceVillage.Owner!, sourceVillage, targetVillage, road, armyCount);
             road.Armies.Add(army);
 
             // Находим ближайшую армию, с которой столкнемся
             var elapsedBattleTime = (army.FinishTime - army.StartTime).TotalSeconds;
             var elapsedDistance = road.Length;
-            foreach (var enemyArmy in road.Armies.Where(_ => _.Owner.Id != accauntId))
+            foreach (var enemyArmy in road.Armies.Where(_ => _.Owner.Id != sourceVillage.Owner!.Id))
             {
                 elapsedBattleTime = Math.Min(elapsedBattleTime, (enemyArmy.FinishTime - army.StartTime).TotalSeconds);
                 elapsedDistance = Math.Min(elapsedDistance, elapsedBattleTime / (army.FinishTime - army.StartTime).TotalSeconds * road.Length);

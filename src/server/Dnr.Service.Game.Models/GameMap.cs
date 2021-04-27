@@ -25,21 +25,21 @@ namespace Dnr.Service.Game.Models
             {
                 new Castle(
                     name: "Nightless City",
-                    x: 100,
-                    y: 100),
+                    x: 200,
+                    y: 200),
                 new Village(
                     name: "Unclean Realm",
-                    x: 50,
-                    y: 50,
+                    x: 100,
+                    y: 100,
                     owner: player1),
                 new Village(
                     name: "Cloud Recesses",
-                    x: 150,
-                    y: 100),
+                    x: 400,
+                    y: 200),
                 new Village(
                     name: "Lotus Pier",
-                    x: 50,
-                    y: 150,
+                    x: 100,
+                    y: 300,
                     owner: player2),
             };
 

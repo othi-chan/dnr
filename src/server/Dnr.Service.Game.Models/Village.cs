@@ -19,8 +19,6 @@ namespace Dnr.Service.Game.Models
 
         public int Level { get; set; }
 
-        public int ArmyCount { get; set; }
-
         public Village(
             string name,
             double x,

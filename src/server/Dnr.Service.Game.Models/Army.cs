@@ -7,7 +7,7 @@ namespace Dnr.Service.Game.Models
     {
         private const int DefaultArmyCount = 100;
 
-        private const double DefaultArmySpeed = 1;
+        private const double DefaultArmySpeed = 10;
 
         public IPlayer Owner { get; }
 
@@ -21,7 +21,7 @@ namespace Dnr.Service.Game.Models
 
         public DateTime FinishTime { get; }
 
-        public double SpeedModifier => 1 / (Count / DefaultArmyCount);
+        public double SpeedModifier => DefaultArmyCount / Count;
 
         public int Count { get; set; }
 
@@ -39,7 +39,7 @@ namespace Dnr.Service.Game.Models
             Count = count;
             StartTime = DateTime.UtcNow;
             FinishTime = StartTime.Add(
-                TimeSpan.FromSeconds(road.Length / ((1.0 / (count / DefaultArmyCount)) * road.SpeedModifier * DefaultArmySpeed)));
+                TimeSpan.FromSeconds(road.Length / ((DefaultArmyCount / count) * road.SpeedModifier * DefaultArmySpeed)));
         }
     }
 }

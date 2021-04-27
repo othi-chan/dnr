@@ -9,7 +9,5 @@ namespace Dnr.Service.Game.Models.Abstractions
         int InfluenceGrowth { get; }
 
         int ArmyCapacity { get; }
-
-        int ArmyCount { get; set; }
     }
 }

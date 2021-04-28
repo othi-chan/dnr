@@ -21,7 +21,12 @@ namespace Dnr.Service.Game.Models
 
         public DateTime FinishTime { get; }
 
-        public double SpeedModifier => DefaultArmyCount / Count;
+        public double SpeedModifier =>
+            DefaultArmyCount / Count > 4
+            ? 4
+            : DefaultArmyCount / Count < 0.25
+                ? 0.25
+                : DefaultArmyCount / Count;
 
         public int Count { get; set; }
 
@@ -39,7 +44,7 @@ namespace Dnr.Service.Game.Models
             Count = count;
             StartTime = DateTime.UtcNow;
             FinishTime = StartTime.Add(
-                TimeSpan.FromSeconds(road.Length / ((DefaultArmyCount / count) * road.SpeedModifier * DefaultArmySpeed)));
+                TimeSpan.FromSeconds(road.Length / (SpeedModifier * road.SpeedModifier * DefaultArmySpeed)));
         }
     }
 }

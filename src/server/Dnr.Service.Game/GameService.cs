@@ -285,6 +285,8 @@ namespace Dnr.Service.Game
                 // Удаляем использованный таймер
                 BattleTimers.Remove(
                         BattleTimers.Single(_ => _.army.Owner.Id == army.Owner.Id && _.army.StartTime == army.StartTime));
+                army.Road.Armies.Remove(army);
+                session?.Map?.Armies.Remove(army);
             }
         }
 
